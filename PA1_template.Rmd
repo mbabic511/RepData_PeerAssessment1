@@ -170,15 +170,20 @@ head(csv)
 #### 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
 ```{r, fig.width = 5, fig.height = 7}
-par(mfcol=c(2,1))
-with(summaryByIntervals[summaryByIntervals$factWd == "weekday", ],
-plot(summaryByIntervals$interval, summaryByIntervals$AvgOfStepsPerInterval, 
-     type="l", col="lightblue", xlab="Interval", ylab="Average no. of steps", main="weekday"))
+library(ggplot2)
+    
+groupedByIntervals2 <- group_by(csv, factWd, interval)
+summaryByIntervals2 <- summarise(groupedByIntervals2, AvgOfStepsPerInterval = mean(steps, na.rm = TRUE))
+par(mfcol=c(1,2))
+p <- qplot(interval, 
+           AvgOfStepsPerInterval, 
+           data=summaryByIntervals2) + 
+            facet_grid(factWd ~ .) + geom_point(shape=1) + 
+             geom_line(linetype="solid", size = 0.1) + 
+            labs(title="Difference between weekdays and weekend", y="Average no. of steps")
+print(p)
 
-with(summaryByIntervals[summaryByIntervals$factWd == "weekend", ],
-plot(summaryByIntervals$interval, summaryByIntervals$AvgOfStepsPerInterval, 
-     type="l", col="lightblue", xlab="Interval", ylab="Average no. of steps", main="weekend"))
-
+head(summaryByIntervals2)
 ```
 
 

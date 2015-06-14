@@ -245,16 +245,37 @@ head(csv)
 
 
 ```r
-par(mfcol=c(2,1))
-with(summaryByIntervals[summaryByIntervals$factWd == "weekday", ],
-plot(summaryByIntervals$interval, summaryByIntervals$AvgOfStepsPerInterval, 
-     type="l", col="lightblue", xlab="Interval", ylab="Average no. of steps", main="weekday"))
-
-with(summaryByIntervals[summaryByIntervals$factWd == "weekend", ],
-plot(summaryByIntervals$interval, summaryByIntervals$AvgOfStepsPerInterval, 
-     type="l", col="lightblue", xlab="Interval", ylab="Average no. of steps", main="weekend"))
+library(ggplot2)
+    
+groupedByIntervals2 <- group_by(csv, factWd, interval)
+summaryByIntervals2 <- summarise(groupedByIntervals2, AvgOfStepsPerInterval = mean(steps, na.rm = TRUE))
+par(mfcol=c(1,2))
+p <- qplot(interval, 
+           AvgOfStepsPerInterval, 
+           data=summaryByIntervals2) + 
+            facet_grid(factWd ~ .) + geom_point(shape=1) + 
+             geom_line(linetype="solid", size = 0.1) + 
+            labs(title="Difference between weekdays and weekend", y="Average no. of steps")
+print(p)
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-18-1.png) 
+
+```r
+head(summaryByIntervals2)
+```
+
+```
+## Source: local data frame [6 x 3]
+## Groups: factWd
+## 
+##    factWd interval AvgOfStepsPerInterval
+## 1 weekend        0              0.000000
+## 2 weekend        5              0.000000
+## 3 weekend       10              0.000000
+## 4 weekend       15              0.000000
+## 5 weekend       20              0.000000
+## 6 weekend       25              3.714286
+```
 
 
